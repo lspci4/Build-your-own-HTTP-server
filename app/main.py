@@ -20,15 +20,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             
             request_path= re.search(r'^\/echo\/(.+)$', request_line[1])
                      
-            response = (
+            
+            if request_path:
+                response = (
                 'HTTP/1.1 200 OK\r\n'
                 'Content-Type: text/plain\r\n'
                 f'Content-Length: {len(request_path.group(1))}\r\n'
                 '\r\n'
                 f'{request_path.group(1)}')
-             
-            print(response)          
-            if request_line[1]==f'/echo/{request_path.group(1)}':
+                
                 conn.sendall(response.encode())
             else:
                 conn.sendall(b'HTTP/1.1 404 Not Found\r\n\r\n')
