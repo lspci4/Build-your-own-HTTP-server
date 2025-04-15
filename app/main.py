@@ -1,7 +1,7 @@
 import socket
 
 host='localhost'
-port=4221
+port=4222
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((host, port))
