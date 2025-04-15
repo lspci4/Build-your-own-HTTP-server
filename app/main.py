@@ -13,25 +13,34 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         with conn:
-            #print(f'\r\nRecibiendo conexión desde', addr)
             data = conn.recv(1024)
             request_data =data.decode().splitlines()
             request_line = request_data[0].split()
+            print(request_line[1])
             
             request_path= re.search(r'^\/echo\/(.+)$', request_line[1])
-                     
             
-            if request_path:
+            if request_line[1]=='/': 
                 response = (
                 'HTTP/1.1 200 OK\r\n'
                 'Content-Type: text/plain\r\n'
-                f'Content-Length: {len(request_path.group(1))}\r\n'
+                f'Content-Length: {len(request_line[1])}\r\n'
                 '\r\n'
-                f'{request_path.group(1)}')
+                f'{request_line[1]}')
                 
                 conn.sendall(response.encode())
-            else:
-                conn.sendall(b'HTTP/1.1 404 Not Found\r\n\r\n')
+            else:         
+                if request_path or request_line[1]=='/':
+                    response = (
+                    'HTTP/1.1 200 OK\r\n'
+                    'Content-Type: text/plain\r\n'
+                    f'Content-Length: {len(request_path.group(1))}\r\n'
+                    '\r\n'
+                    f'{request_path.group(1)}')
+                    
+                    conn.sendall(response.encode())
+                else:
+                    conn.sendall(b'HTTP/1.1 404 Not Found\r\n\r\n')
 
         
         
