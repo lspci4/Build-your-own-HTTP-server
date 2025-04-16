@@ -67,7 +67,7 @@ def main():
                         print(http_response.encode())
                         conn.sendall(http_response.encode())
                     else:
-                        http_response = response_404(user_agent,user_agent_len)
+                        http_response = response_404()
                         conn.sendall(http_response.encode())
         
 if __name__=="__main__":
