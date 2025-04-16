@@ -1,4 +1,5 @@
 ### Respoond with body ###
+### $ curl -v http://localhost:4221/echo/abc ###
 
 import socket
 import re
