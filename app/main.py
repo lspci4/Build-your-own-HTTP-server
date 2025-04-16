@@ -13,7 +13,9 @@ def request_user(data):
     path_user_agent = request_line[1]
     print(path_user_agent)
     
-    if path_user_agent=='/user-agent':    
+    if path_user_agent == '/':
+        return '', 0
+    elif path_user_agent=='/user-agent':    
         for line in request_data[1:]:
             if line.lower().startswith('user-agent'):
                 parts = line.split(':', 1)
@@ -23,8 +25,7 @@ def request_user(data):
         return user_agent, user_agent_len
     elif path_user_agent.startswith('/echo/'):
         echo_text = path_user_agent[len('/echo/'):]
-        return echo_text, len(echo_text)
-        
+        return echo_text, len(echo_text)        
     else:
         return None, None
 
