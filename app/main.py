@@ -22,7 +22,7 @@ def request_user(data):
                 print(user_agent,user_agent_len)
         return user_agent, user_agent_len
     elif path_user_agent.startswith('/echo/'):
-        echo_text = path_user_agent[len('/echo'):]
+        echo_text = path_user_agent[len('/echo/'):]
         return echo_text, len(echo_text)
         
     else:
