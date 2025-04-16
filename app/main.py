@@ -21,6 +21,10 @@ def request_user(data):
                 user_agent_len = len(user_agent)
                 print(user_agent,user_agent_len)
         return user_agent, user_agent_len
+    elif path_user_agent.startswith('/echo/'):
+        echo_text = path_user_agent[len('/echo'):]
+        return echo_text, len(echo_text)
+        
     else:
         return None, None
 
@@ -34,11 +38,11 @@ def response_user(user_agent, user_agent_len):
     )
     return ''.join(content)
 
-def response_404(user_agent, user_agent_len):
+def response_404():
     content = (
         f'HTTP/1.1 404 Not Found\r\n',
         f'Content-Type: text/plain\r\n',
-        f'Content-Length: {user_agent}\r\n',
+        f'Content-Length: \r\n',
         f'\r\n',
         f'Not Found'
     )
