@@ -1,5 +1,6 @@
 import socket
 import re
+from threading import Thread
 
 HOST = 'localhost'
 PORT = 4221
@@ -15,6 +16,11 @@ def request_user(data):
     
     if path_user_agent == '/':
         return '', 0
+      
+    elif path_user_agent.startswith('/echo/'):
+        echo_text = path_user_agent[len('/echo/'):]
+        return echo_text, len(echo_text) 
+    
     elif path_user_agent=='/user-agent':    
         for line in request_data[1:]:
             if line.lower().startswith('user-agent'):
@@ -22,10 +28,7 @@ def request_user(data):
                 user_agent = parts[1].strip()
                 user_agent_len = len(user_agent)
                 print(user_agent,user_agent_len)
-        return user_agent, user_agent_len
-    elif path_user_agent.startswith('/echo/'):
-        echo_text = path_user_agent[len('/echo/'):]
-        return echo_text, len(echo_text)        
+        return user_agent, user_agent_len           
     else:
         return None, None
 
@@ -60,6 +63,7 @@ def main():
             print(f'Server listening on {HOST}:{PORT}')
             while True:
                 data = conn.recv(BUFFER_SIZE)
+                t = Thread(target=conn)
                 if data:
                     user_agent, user_agent_len = request_user(data)
                     
