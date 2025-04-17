@@ -63,7 +63,6 @@ def main():
             print(f'Server listening on {HOST}:{PORT}')
             while True:
                 data = conn.recv(BUFFER_SIZE)
-                t = Thread(target=conn)
                 if data:
                     user_agent, user_agent_len = request_user(data)
                     
