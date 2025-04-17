@@ -52,27 +52,35 @@ def response_404():
     )
     return ''.join(content)
 
+def handle_connection(conn, addr):
+    print('Creando hilo..')
+    with conn:
+        print(f'Server listening on {HOST}:{PORT}')
+        while True:              
+            data = conn.recv(BUFFER_SIZE)
+            if data:
+                user_agent, user_agent_len = request_user(data)
+                    
+                if user_agent is not None:
+                    http_response = response_user(user_agent,user_agent_len)
+                    print(http_response.encode())
+                    conn.sendall(http_response.encode())
+                else:
+                    http_response = response_404()
+                    conn.sendall(http_response.encode())   
+
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
-        s.listen(1)
-        conn, addr = s.accept()
+        s.listen()
         
-        with conn:
-            print(f'Server listening on {HOST}:{PORT}')
-            while True:
-                data = conn.recv(BUFFER_SIZE)
-                if data:
-                    user_agent, user_agent_len = request_user(data)
-                    
-                    if user_agent is not None:
-                        http_response = response_user(user_agent,user_agent_len)
-                        print(http_response.encode())
-                        conn.sendall(http_response.encode())
-                    else:
-                        http_response = response_404()
-                        conn.sendall(http_response.encode())
+        while True:
+            conn, addr = s.accept()
+            t = Thread(target=handle_connection, args=(conn, addr))
+            t.daemon = True
+            t.start()
+        
         
 if __name__=="__main__":
     main()
