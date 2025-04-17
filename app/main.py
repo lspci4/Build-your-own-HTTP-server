@@ -69,6 +69,9 @@ def handle_connection(conn, addr):
                     http_response = response_404()
                     conn.sendall(http_response.encode())   
 
+def path_user():
+    print('Path a probar...')
+
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
