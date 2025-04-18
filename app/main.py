@@ -8,7 +8,7 @@ HOST = 'localhost'
 PORT = 4221
 BUFFER_SIZE = 1024
 
-def request_user(data): 
+def request_user(data, DIR_PATH): 
     request_data = data.decode().splitlines()
     print(f'Request Data: {request_data} \r\n') # [A,B,C,D] --> [0,1,2,3]
     
@@ -31,15 +31,14 @@ def request_user(data):
                 user_agent_len = len(user_agent)
                 print(f'user agent: {user_agent}, user agent len: {user_agent_len} \r\n')
         return user_agent, user_agent_len   
-    elif path_user=='/files/':
-        file_name = path_user[len('/files/'):]
-        print(file_name)
-        
-        
+                
     elif path_user.lower().startswith('/files/'):
         file_name = path_user[len('/files/'):]
         full_path = os.path.join(DIR_PATH, file_name)
-        return full_path
+        if os.path.isfile(full_path):
+            with open(full_path, 'rb') as f:
+                file_data = f.read()
+            return file_name, file_data, full_path
     else:
         return None, None
 
