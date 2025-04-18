@@ -1,6 +1,7 @@
 import socket
 import re
 from threading import Thread
+import sys
 
 HOST = 'localhost'
 PORT = 4221
@@ -28,7 +29,11 @@ def request_user(data):
                 user_agent = parts[1].strip()
                 user_agent_len = len(user_agent)
                 print(user_agent,user_agent_len)
-        return user_agent, user_agent_len           
+        return user_agent, user_agent_len   
+    elif path_user_agent=='/files/':
+        file_name = path_user_agent[len('/files/'):]
+        print(file_name)
+                
     else:
         return None, None
 
@@ -69,10 +74,21 @@ def handle_connection(conn, addr):
                     http_response = response_404()
                     conn.sendall(http_response.encode())   
 
-def path_user():
+def response_user_path():
     print('Path a probar...')
 
 def main():
+    ### python3 server.py --directory /tmp/
+    ### sys.argv = ['server.py', '--directory', '/tmp']
+    
+    if len(sys.argv) and sys.argv[1] == '--directory':
+        DIR_PATH = sys.argv[2]
+        print(f'El directorio seleccionado es: {DIR_PATH}')
+    else:
+        print(f'Uso correcto: {sys.argv[0]} --directory <ruta>')
+        exit(1)
+        
+        
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
