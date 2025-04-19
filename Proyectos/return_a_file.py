@@ -10,7 +10,7 @@ BUFFER_SIZE = 1024
 
 def request_user(data, DIR_PATH): 
     request_data = data.decode().splitlines()
-    print(f'Request Data: {request_data} \r\n') # [A,B,C,D] --> [0,1,2,3]
+    print(f'Request Data: {request_data} \r\n')
     
     request_line = request_data[0].split()
     path_user = request_line[1]
@@ -102,7 +102,6 @@ def main():
     if len(sys.argv) == 3 and sys.argv[1] == '--directory':
         DIR_PATH = sys.argv[2]
     else:
-        # Usa directorio por defecto para pruebas
         DIR_PATH = '.'
 
     print(f'El directorio seleccionado es: {DIR_PATH}')
