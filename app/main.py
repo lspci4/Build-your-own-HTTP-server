@@ -17,11 +17,11 @@ def request_user(data, DIR_PATH):
     print(f'Path User: {path_user} \r\n')
     
     if path_user == '/':
-        return '', 0
+        return 'text', '', 0
       
     elif path_user.startswith('/echo/'):
         echo_text = path_user[len('/echo/'):]
-        return echo_text, len(echo_text) 
+        return 'text', echo_text, len(echo_text) 
     
     elif path_user=='/user-agent':    
         for line in request_data[1:]:
@@ -30,7 +30,7 @@ def request_user(data, DIR_PATH):
                 user_agent = parts[1].strip()
                 user_agent_len = len(user_agent)
                 print(f'user agent: {user_agent}, user agent len: {user_agent_len} \r\n')
-        return user_agent, user_agent_len   
+        return 'text', user_agent, user_agent_len   
                 
     elif path_user.lower().startswith('/files/'):
         file_name = path_user[len('/files/'):]
@@ -41,6 +41,8 @@ def request_user(data, DIR_PATH):
             return 'file', full_path, os.path.getsize(full_path)
     else:
         return '404', None, None
+    
+    return '404', None, None
 
 def response_user(user_agent, user_agent_len):
     content = (
