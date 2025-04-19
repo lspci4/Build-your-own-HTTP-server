@@ -99,27 +99,25 @@ def handle_connection(conn, addr, DIR_PATH):
                     conn.sendall(http_response)
 
 def main():
-    ### python3 server.py --directory /tmp/
-    ### sys.argv = ['server.py', '--directory', '/tmp']
-    
-    if len(sys.argv) ==3 and sys.argv[1] == '--directory':
+    if len(sys.argv) == 3 and sys.argv[1] == '--directory':
         DIR_PATH = sys.argv[2]
-        print(f'El directorio seleccionado es: {DIR_PATH}')
     else:
-        print(f'Uso correcto: {sys.argv[0]} --directory <ruta>')
-        exit(1)
-        
-        
+        # Usa directorio por defecto para pruebas
+        DIR_PATH = '.'
+
+    print(f'El directorio seleccionado es: {DIR_PATH}')
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen()
-        
+
         while True:
             conn, addr = s.accept()
             t = Thread(target=handle_connection, args=(conn, addr, DIR_PATH))
             t.daemon = True
             t.start()
+
         
         
 if __name__=="__main__":
