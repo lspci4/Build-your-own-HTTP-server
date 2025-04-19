@@ -38,9 +38,9 @@ def request_user(data, DIR_PATH):
         if os.path.isfile(full_path):
             with open(full_path, 'rb') as f:
                 file_data = f.read()
-            return file_name, file_data, full_path
+            return 'file', full_path, os.path.getsize(full_path)
     else:
-        return None, None
+        return '404', None, None
 
 def response_user(user_agent, user_agent_len):
     content = (
@@ -62,25 +62,39 @@ def response_404():
     )
     return ''.join(content)
 
-def handle_connection(conn, addr,DIR_PATH):
+def handle_connection(conn, addr, DIR_PATH):
     print('Creando hilo..')
     with conn:
         print(f'Server listening on {HOST}:{PORT}')
         while True:              
             data = conn.recv(BUFFER_SIZE)
             if data:
-                user_agent, user_agent_len, DIR_PATH = request_user(data)
-                    
-                if user_agent is not None:
-                    http_response = response_user(user_agent,user_agent_len)
-                    print(http_response.encode())
-                    conn.sendall(http_response.encode())
-                else:
-                    http_response = response_404()
-                    conn.sendall(http_response.encode())   
+                type_data, content, content_len = request_user(data, DIR_PATH)
 
-def response_user_path():
-    print('Path a probar...')
+                if type_data == 'file':
+                    with open(content, 'rb') as f:
+                        file_data = f.read()
+                    http_response = (
+                        f'HTTP/1.1 200 OK\r\n'
+                        f'Content-Type: application/octet-stream\r\n'
+                        f'Content-Length: {content_len}\r\n'
+                        f'\r\n'
+                    ).encode() + file_data
+                    conn.sendall(http_response)
+
+                elif type_data == 'text':
+                    http_response = (
+                        f'HTTP/1.1 200 OK\r\n'
+                        f'Content-Type: text/plain\r\n'
+                        f'Content-Length: {content_len}\r\n'
+                        f'\r\n'
+                        f'{content}'
+                    ).encode()
+                    conn.sendall(http_response)
+
+                else:
+                    http_response = response_404().encode()
+                    conn.sendall(http_response)
 
 def main():
     ### python3 server.py --directory /tmp/
